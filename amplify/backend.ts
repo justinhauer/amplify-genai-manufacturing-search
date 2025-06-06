@@ -130,63 +130,63 @@ collection.node.addDependency(networkPolicy);
 
 // /* !! REMOVE COMMENTS ON CODE BELOW FOR SECOND DEPLOYMENT !! */
 
-// /* CREATE AN AMAZON BEDROCK KNOWLEDGEBASE */
-// const knowledgeBase = new bedrock.CfnKnowledgeBase(customResourceStack, 'BedrockKB', {
-//   knowledgeBaseConfiguration: {
-//     type: 'VECTOR',
-//     vectorKnowledgeBaseConfiguration: {
-//       embeddingModelArn: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0',
-//     },
-//   },
-//   name: 'amplify-search-tool-kb',
-//   roleArn: permissions.roleArn,
-//   storageConfiguration: {
-//     type: 'OPENSEARCH_SERVERLESS',
-//     opensearchServerlessConfiguration: {
-//       collectionArn: collection.attrArn,
-//       vectorIndexName: 'bedrock-knowledge-base-default-index',
-//       fieldMapping: {
-//         vectorField: 'bedrock-knowledge-base-default-vector',
-//         textField: 'AMAZON_BEDROCK_TEXT_CHUNK',
-//         metadataField: 'AMAZON_BEDROCK_METADATA',
-//       }
-//     },
-//   }
-// });
+/* CREATE AN AMAZON BEDROCK KNOWLEDGEBASE */
+const knowledgeBase = new bedrock.CfnKnowledgeBase(customResourceStack, 'BedrockKB', {
+  knowledgeBaseConfiguration: {
+    type: 'VECTOR',
+    vectorKnowledgeBaseConfiguration: {
+      embeddingModelArn: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0',
+    },
+  },
+  name: 'amplify-search-tool-kb',
+  roleArn: permissions.roleArn,
+  storageConfiguration: {
+    type: 'OPENSEARCH_SERVERLESS',
+    opensearchServerlessConfiguration: {
+      collectionArn: collection.attrArn,
+      vectorIndexName: 'bedrock-knowledge-base-default-index',
+      fieldMapping: {
+        vectorField: 'bedrock-knowledge-base-default-vector',
+        textField: 'AMAZON_BEDROCK_TEXT_CHUNK',
+        metadataField: 'AMAZON_BEDROCK_METADATA',
+      }
+    },
+  }
+});
 
-// /* DEFINE S3 AS DATA SOURCE FOR AMAZON BEDROCK KNOWLEDGBASE */
-// new bedrock.CfnDataSource(customResourceStack, 'BedrockDataSource', {
-//   name: 'amplify-search-tool-data-source',
-//   knowledgeBaseId: knowledgeBase.attrKnowledgeBaseId,
-//   dataSourceConfiguration: {
-//     type: 'S3',
-//     s3Configuration: {
-//       bucketArn: backend.storage.resources.bucket.bucketArn,
-//     },
-//   },
-// });
+/* DEFINE S3 AS DATA SOURCE FOR AMAZON BEDROCK KNOWLEDGBASE */
+new bedrock.CfnDataSource(customResourceStack, 'BedrockDataSource', {
+  name: 'amplify-search-tool-data-source',
+  knowledgeBaseId: knowledgeBase.attrKnowledgeBaseId,
+  dataSourceConfiguration: {
+    type: 'S3',
+    s3Configuration: {
+      bucketArn: backend.storage.resources.bucket.bucketArn,
+    },
+  },
+});
 
-// /* ADDING IAM POLICIES TO GENERATE HAIKU LAMBDA FUNCTION */
-// backend.generateHaikuFunction.resources.lambda.addToRolePolicy(
-//   new PolicyStatement({
-//     effect: Effect.ALLOW,
-//     actions: [
-//       "bedrock:RetrieveAndGenerate",
-//       "bedrock:Retrieve",
-//       "bedrock:InvokeModel",
-//       "bedrock:InvokeModelWithResponseStream",
-//       "kms:GenerateDataKey"
-//     ],
-//     resources: [
-//       myKey.keyArn,
-//       knowledgeBase.attrKnowledgeBaseArn,
-//       "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0", "arn:aws:bedrock:*::foundation-model/model-id",
-//     ],
-//   })
-// );
+/* ADDING IAM POLICIES TO GENERATE HAIKU LAMBDA FUNCTION */
+backend.generateHaikuFunction.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    effect: Effect.ALLOW,
+    actions: [
+      "bedrock:RetrieveAndGenerate",
+      "bedrock:Retrieve",
+      "bedrock:InvokeModel",
+      "bedrock:InvokeModelWithResponseStream",
+      "kms:GenerateDataKey"
+    ],
+    resources: [
+      myKey.keyArn,
+      knowledgeBase.attrKnowledgeBaseArn,
+      "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0", "arn:aws:bedrock:*::foundation-model/model-id",
+    ],
+  })
+);
 
-// /* DEFINE ENVIRONMENT VARIABLES FOR GENERATE HAIKU LAMBDA FUNCTION */
-// backend.generateHaikuFunction.addEnvironment("KMS_KEY", myKey.keyArn);
-// backend.generateHaikuFunction.addEnvironment("KNOWLEDGE_BASE_ID", knowledgeBase.attrKnowledgeBaseId);
-// backend.generateHaikuFunction.addEnvironment("MODEL_ID", 'anthropic.claude-3-haiku-20240307-v1:0');
-// backend.generateHaikuFunction.addEnvironment("MODEL_ARN", 'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0');
+/* DEFINE ENVIRONMENT VARIABLES FOR GENERATE HAIKU LAMBDA FUNCTION */
+backend.generateHaikuFunction.addEnvironment("KMS_KEY", myKey.keyArn);
+backend.generateHaikuFunction.addEnvironment("KNOWLEDGE_BASE_ID", knowledgeBase.attrKnowledgeBaseId);
+backend.generateHaikuFunction.addEnvironment("MODEL_ID", 'anthropic.claude-3-haiku-20240307-v1:0');
+backend.generateHaikuFunction.addEnvironment("MODEL_ARN", 'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0');
