@@ -3,11 +3,10 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as opensearchserverless from 'aws-cdk-lib/aws-opensearchserverless'
 
-// /* !! REMOVE COMMENTS ON CODE BELOW FOR SECOND DEPLOYMENT !! */
 
 // /* AWS CDK LIBRARIES FOR BEDROCK AND PERMISSIONS */
-// import * as bedrock from 'aws-cdk-lib/aws-bedrock';
-// import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import * as bedrock from 'aws-cdk-lib/aws-bedrock';
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 /* AWS AMPLIFY LIBRARIES BACKEND DEFINITIONS */
 import { defineBackend } from '@aws-amplify/backend';
@@ -115,22 +114,17 @@ const networkPolicy = new opensearchserverless.CfnSecurityPolicy(customResourceS
   }])
 });
 
-/* DEFINE AMAZON OPENSEARCH SERVERLESS COLLECTION */
 const collection = new opensearchserverless.CfnCollection(customResourceStack, 'OpenSearchCollection', {
   name: 'amplify-aoss-collection',
   type: 'VECTORSEARCH',
   description: 'Collection for amplify search tool',
 });
 
-/* CREATE COLLECTION IF REQUIRED RESOURCES EXIST USING 'DependsOn' */
 collection.node.addDependency(myKey);
 collection.addDependency(accessPolicy);
 collection.node.addDependency(securityPolicy);
 collection.node.addDependency(networkPolicy);
 
-// /* !! REMOVE COMMENTS ON CODE BELOW FOR SECOND DEPLOYMENT !! */
-
-/* CREATE AN AMAZON BEDROCK KNOWLEDGEBASE */
 const knowledgeBase = new bedrock.CfnKnowledgeBase(customResourceStack, 'BedrockKB', {
   knowledgeBaseConfiguration: {
     type: 'VECTOR',
@@ -154,7 +148,6 @@ const knowledgeBase = new bedrock.CfnKnowledgeBase(customResourceStack, 'Bedrock
   }
 });
 
-/* DEFINE S3 AS DATA SOURCE FOR AMAZON BEDROCK KNOWLEDGBASE */
 new bedrock.CfnDataSource(customResourceStack, 'BedrockDataSource', {
   name: 'amplify-search-tool-data-source',
   knowledgeBaseId: knowledgeBase.attrKnowledgeBaseId,
@@ -166,7 +159,6 @@ new bedrock.CfnDataSource(customResourceStack, 'BedrockDataSource', {
   },
 });
 
-/* ADDING IAM POLICIES TO GENERATE HAIKU LAMBDA FUNCTION */
 backend.generateHaikuFunction.resources.lambda.addToRolePolicy(
   new PolicyStatement({
     effect: Effect.ALLOW,
@@ -185,7 +177,6 @@ backend.generateHaikuFunction.resources.lambda.addToRolePolicy(
   })
 );
 
-/* DEFINE ENVIRONMENT VARIABLES FOR GENERATE HAIKU LAMBDA FUNCTION */
 backend.generateHaikuFunction.addEnvironment("KMS_KEY", myKey.keyArn);
 backend.generateHaikuFunction.addEnvironment("KNOWLEDGE_BASE_ID", knowledgeBase.attrKnowledgeBaseId);
 backend.generateHaikuFunction.addEnvironment("MODEL_ID", 'anthropic.claude-3-haiku-20240307-v1:0');
