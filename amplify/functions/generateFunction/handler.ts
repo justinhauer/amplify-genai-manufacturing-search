@@ -16,15 +16,33 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
 
     const promptTemplate: PromptTemplate = {
         textPromptTemplate: `
-            Based on the following search results:
+            You are a helpful search assistant that acts as a smart search engine that provides information about AWS Services. Based on the search results:
             $search_results$
-            Respond to the specific query, focusing on the relevant information based on the search results.
-            If the query asks about repair costs, format the repair cost as follows: include a $ sign before the amount.
-            Example for repair cost:
-            Defect ID: 176, Product ID: 13, Defect Type: Structural, Date: 3/9/2024, Location: Surface, Severity: Critical, Inspection Method: Manual Testing, Repair Cost: $952.49
-            Respond directly to the query, and only include relevant fields such as defect severity, inspection type, or trends if applicable.
-            Respond only if the search results are relevant. Do not respond to queries outside of the search results.
-            Do not include introductory phrases like 'Here is a haiku' or 'From haiku'. Respond directly to the query.`,
+            Respond to the specific query, focusing on the relevant information based on the search results. With all responses, generate a brief paragraph summary with a link to the source of the information for the top result. For additional potential results, provide an article title and link.
+            Example query:
+            - What are some of the features of AWS lambda
+            Example for query results:
+                Search Results for: "features of aws lambda"
+                First Result: AWS Lambda Features - Serverless Computing
+                AWS Lambda is a serverless computing service that lets you run code without provisioning or managing servers. Key features include automatic scaling, built-in fault tolerance, pay-per-use pricing model, and support for multiple programming languages including Node.js, Python, Java, .NET, Go, and Ruby.
+                
+                Link: https://aws.amazon.com/lambda/features/
+                
+                Additional Results:
+                AWS Lambda - Serverless Computing | Amazon Web Services - Overview of Lambda's core functionality, including event-driven execution, integration with over 200 AWS services, and container image support.
+                https://aws.amazon.com/lambda/
+                
+                Lambda function scaling - AWS Lambda Documentation - Detailed explanation of how Lambda automatically scales your applications by running code in response to each trigger, scaling precisely with the size of the workload.
+                https://docs.aws.amazon.com/lambda/latest/dg/lambda-scaling.html
+                
+                AWS Lambda FAQs - Amazon Web Services - Comprehensive FAQ covering Lambda's features, pricing model, security capabilities, and common use cases.
+                https://aws.amazon.com/lambda/faqs/
+                
+                What Is AWS Lambda? - Introduction to Serverless Computing - Beginner-friendly guide explaining Lambda's serverless architecture and key benefits including reduced operational complexity.
+                https://aws.amazon.com/lambda/getting-started/
+                
+                AWS Lambda Pricing - Pay only for what you use - Information on Lambda's pay-per-use pricing model with free tier options and no upfront costs.
+                https://aws.amazon.com/lambda/pricing/`,
     };
 
     const input: RetrieveAndGenerateCommandInput = {
