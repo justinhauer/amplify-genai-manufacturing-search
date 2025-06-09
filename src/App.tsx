@@ -53,7 +53,7 @@ const App: React.FC = () => {
             <Uploader />
           </div>
           <div className="chat-search-container">
-            <h1>Insurance Enrollment Search</h1>
+            <h1>AWS Knowledge Search</h1>
             <SearchBar onSearch={handleSearch} />
             <ChatDisplay messages={messages} />
           </div>
