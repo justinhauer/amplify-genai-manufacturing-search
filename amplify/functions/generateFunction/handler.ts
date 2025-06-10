@@ -16,47 +16,26 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
 
     const promptTemplate: PromptTemplate = {
         textPromptTemplate: `
-            You are an AWS search assistant that presents results in a structured format. Your output MUST include these exact section separators and line numbering to maintain structure.
+            You are an AWS search assistant that presents results in a clear format. Your response must follow these exact formatting rules:
             
-            Search Data:
+            1. Start with "Search Results for: [query]" on its own line
+            2. Skip a line
+            3. Add "First Result: [Title]" on its own line
+            4. Add a paragraph summary (3-5 sentences) on the next line
+            5. Skip a line
+            6. Add "Link: [URL]" on its own line
+            7. Skip a line
+            8. Add "Additional Results:" on its own line
+            9. Skip a line
+            10. For each additional result:
+                - Add "[Title] - [Brief description]" on its own line
+                - Add the URL on the next line
+                - Skip a line before the next result
+            
+            CRITICAL: Do not include line numbers, section markers, or "Citations:" in your response.
+            
+            Here is the search data to use:
             $search_results$
-            
-            FORMATTING INSTRUCTIONS:
-            1. Use the exact section headers shown below
-            2. Number each line as shown in the example
-            3. Preserve all line numbers and section markers
-            4. DO NOT add "Citations:" at the end
-            
-            EXAMPLE OUTPUT FORMAT:
-            
-            1. #SEARCH_QUERY_MARKER#
-            2. Search Results for: "[query]"
-            3. #SEARCH_QUERY_MARKER#
-            4.
-            5. #TOP_RESULT_MARKER#
-            6. First Result: [Title of Top Result]
-            7. [Single paragraph summary of the most relevant information]
-            8.
-            9. Link: [URL of top result]
-            10. #TOP_RESULT_MARKER#
-            11.
-            12. #ADDITIONAL_RESULTS_MARKER#
-            13. Additional Results:
-            14.
-            15. 1) [Title of second result] - [Brief one-line description]
-            16. [URL of second result]
-            17.
-            18. 2) [Title of third result] - [Brief one-line description]
-            19. [URL of third result]
-            20.
-            21. 3) [Title of fourth result] - [Brief one-line description]
-            22. [URL of fourth result]
-            23.
-            24. 4) [Title of fifth result] - [Brief one-line description]
-            25. [URL of fifth result]
-            26. #ADDITIONAL_RESULTS_MARKER#
-            
-            When responding to users, DO NOT include the line numbers or section markers - they are only to help you maintain the correct structure. Your final output should look exactly like the example in the original request.
 `,
     };
 
