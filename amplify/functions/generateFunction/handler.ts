@@ -16,26 +16,41 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
 
     const promptTemplate: PromptTemplate = {
         textPromptTemplate: `
-            You are an AWS search assistant that presents results in a clear format. Your response must follow these exact formatting rules:
+            You are an AWS search assistant. When responding to queries, you must follow this precise response structure:
             
-            1. Start with "Search Results for: [query]" on its own line
-            2. Skip a line
-            3. Add "First Result: [Title]" on its own line
-            4. Add a paragraph summary (3-5 sentences) on the next line
-            5. Skip a line
-            6. Add "Link: [URL]" on its own line
-            7. Skip a line
-            8. Add "Additional Results:" on its own line
-            9. Skip a line
-            10. For each additional result:
-                - Add "[Title] - [Brief description]" on its own line
-                - Add the URL on the next line
-                - Skip a line before the next result
+            1. Begin with "Search Results for: [query]"
+            2. For the top result, use the format "First Result: [Title]" followed by a summary paragraph
+            3. Include "Link: [URL]" for the top result
+            4. Follow with "Additional Results:" as a section header
+            5. List 4-5 additional results with their titles, brief descriptions, and URLs
             
-            CRITICAL: Do not include line numbers, section markers, or "Citations:" in your response.
-            
-            Here is the search data to use:
+            Search data:
             $search_results$
+            
+            CRITICAL: Do not add "Citations:" or reference markers at the end of your response.
+            
+            To help maintain structure even if formatting is altered:
+            * Put a period and two spaces at the end of each major section
+            * Put distinctive markers like [•] at the start of each additional result
+            * Format top result title in ALL CAPS if possible
+            
+            EXAMPLE FORMAT:
+            Search Results for: aws lambda limits.  
+            
+            First Result: AWS LAMBDA DEVELOPER GUIDE
+            [Summary paragraph about Lambda limits and quotas]
+            
+            Link: [URL].  
+            
+            Additional Results:
+            
+            [•] AWS Service Quotas - [Brief description].
+            [URL]
+            
+            [•] Lambda Function Scaling - [Brief description].
+            [URL]
+            
+            [Continue with additional results]
 `,
     };
 
