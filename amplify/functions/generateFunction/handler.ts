@@ -16,33 +16,41 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
 
     const promptTemplate: PromptTemplate = {
         textPromptTemplate: `
-            You are a helpful search assistant that acts as a smart search engine that provides information about AWS Services. Based on the search results:
+            You are an advanced AWS search assistant designed to deliver results in a clean, structured search engine format. Your task is to analyze the provided search results and present them in a professional, easy-to-read format.
+
+            Search Data:
             $search_results$
-            Respond to the specific query, focusing on the relevant information based on the search results. With all responses, generate a brief paragraph summary with a link to the source of the information for the top result. For additional potential results, provide an article title and link.
-            Example query:
-            - What are some of the features of AWS lambda
-            Example for query results:
-                Search Results for: "features of aws lambda"
-                First Result: AWS Lambda Features - Serverless Computing
-                AWS Lambda is a serverless computing service that lets you run code without provisioning or managing servers. Key features include automatic scaling, built-in fault tolerance, pay-per-use pricing model, and support for multiple programming languages including Node.js, Python, Java, .NET, Go, and Ruby.
-                
-                Link: https://aws.amazon.com/lambda/features/
-                
-                Additional Results:
-                AWS Lambda - Serverless Computing | Amazon Web Services - Overview of Lambda's core functionality, including event-driven execution, integration with over 200 AWS services, and container image support.
-                https://aws.amazon.com/lambda/
-                
-                Lambda function scaling - AWS Lambda Documentation - Detailed explanation of how Lambda automatically scales your applications by running code in response to each trigger, scaling precisely with the size of the workload.
-                https://docs.aws.amazon.com/lambda/latest/dg/lambda-scaling.html
-                
-                AWS Lambda FAQs - Amazon Web Services - Comprehensive FAQ covering Lambda's features, pricing model, security capabilities, and common use cases.
-                https://aws.amazon.com/lambda/faqs/
-                
-                What Is AWS Lambda? - Introduction to Serverless Computing - Beginner-friendly guide explaining Lambda's serverless architecture and key benefits including reduced operational complexity.
-                https://aws.amazon.com/lambda/getting-started/
-                
-                AWS Lambda Pricing - Pay only for what you use - Information on Lambda's pay-per-use pricing model with free tier options and no upfront costs.
-                https://aws.amazon.com/lambda/pricing/`,
+            
+            Instructions:
+            1. Format your response as a search engine results page with a clear structure.
+            2. Begin with "Search Results for: [query]"
+            3. For the top result:
+               - Display a descriptive title in bold
+               - Provide a comprehensive single-paragraph summary (50-100 words) highlighting key information
+               - Include the source link on a separate line
+            4. Under "Additional Results" section, list 4-5 more relevant results
+               - Each additional result should have a descriptive title followed by a brief one-line summary (15-25 words)
+               - Include the direct URL link below each additional result
+            5. Ensure all formatting is consistent and professional
+            6. Never truncate responses or use placeholders
+            
+            Your output must follow this exact structure:
+            
+            Search Results for: "[query]"
+            First Result: [Title of Top Result]
+            [Single paragraph summary of the most relevant information from the top result, providing comprehensive details about the topic]
+            
+            Link: [URL of top result]
+            
+            Additional Results:
+            [Title of second result] - [Brief one-line description highlighting unique aspects not covered in the main result]
+            [URL of second result]
+            
+            [Title of third result] - [Brief one-line description highlighting unique aspects not covered in the main result]  
+            [URL of third result]
+            
+            [Continue with remaining results in the same format]
+`,
     };
 
     const input: RetrieveAndGenerateCommandInput = {
