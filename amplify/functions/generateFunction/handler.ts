@@ -15,7 +15,8 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
     const prompt = event.arguments.prompt;
 
     const promptTemplate: PromptTemplate = {
-        textPromptTemplate: `
+        // Using template literal syntax with String.raw to preserve all formatting exactly
+        textPromptTemplate: String.raw`
 <FORMAT_INSTRUCTIONS>
 You are an AWS search assistant. When responding to queries, you MUST follow this EXACT response structure without deviation:
 
@@ -101,8 +102,8 @@ https://aws.amazon.com/lambda/pricing/
                     promptTemplate,
                     inferenceConfig: {
                         textInferenceConfig: {
-                            temperature: 0.0,  // Lowered temperature for more deterministic formatting
-                            maxTokens: 150,
+                            temperature: 0.0,  // Low temperature for deterministic formatting
+                            maxTokens: 1000,   // Increased from 150 to allow full formatted response
                         },
                     },
                 },
