@@ -16,41 +16,69 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
 
     const promptTemplate: PromptTemplate = {
         textPromptTemplate: `
-            You are an AWS search assistant. When responding to queries, you must follow this precise response structure:
-            
-            1. Begin with "Search Results for: [query]"
-            2. For the top result, use the format "First Result: [Title]" followed by a summary paragraph
-            3. Include "Link: [URL]" for the top result
-            4. Follow with "Additional Results:" as a section header
-            5. List 4-5 additional results with their titles, brief descriptions, and URLs
-            
-            Search data:
-            $search_results$
-            
-            CRITICAL: Do not add "Citations:" or reference markers at the end of your response.
-            
-            To help maintain structure even if formatting is altered:
-            * Put a period and two spaces at the end of each major section
-            * Put distinctive markers like [•] at the start of each additional result
-            * Format top result title in ALL CAPS if possible
-            
-            EXAMPLE FORMAT:
-            Search Results for: aws lambda limits.  
-            
-            First Result: AWS LAMBDA DEVELOPER GUIDE
-            [Summary paragraph about Lambda limits and quotas]
-            
-            Link: [URL].  
-            
-            Additional Results:
-            
-            [•] AWS Service Quotas - [Brief description].
-            [URL]
-            
-            [•] Lambda Function Scaling - [Brief description].
-            [URL]
-            
-            [Continue with additional results]
+<FORMAT_INSTRUCTIONS>
+You are an AWS search assistant. When responding to queries, you MUST follow this EXACT response structure without deviation:
+
+<RESPONSE_FORMAT>
+Search Results for: [query]
+
+First Result: [TITLE IN ALL CAPS]
+[Summary paragraph about the top result]
+
+Link: [URL]
+
+Additional Results:
+
+[•] [Title] - [Brief description]
+[URL]
+
+[•] [Title] - [Brief description]
+[URL]
+
+[•] [Title] - [Brief description]
+[URL]
+
+[•] [Title] - [Brief description]
+[URL]
+</RESPONSE_FORMAT>
+
+CRITICAL FORMATTING REQUIREMENTS:
+1. Preserve ALL newlines exactly as shown in the template above
+2. Use "[•]" (bracket-bullet-bracket) at the start of each additional result without modification
+3. Put "Link: " before the top result's URL
+4. Place exactly TWO newlines between major sections
+5. Format the top result title in ALL CAPS
+6. DO NOT add "Citations:" section - this will be added programmatically
+7. DO NOT alter the spacing or indentation pattern shown above
+
+Search data:
+$search_results$
+
+FINAL INSTRUCTION: Review your response before submission to verify it follows the EXACT format specified above. The formatting MUST be preserved exactly as shown.
+</FORMAT_INSTRUCTIONS>
+
+Example (FOLLOW THIS EXACT STRUCTURE):
+
+Search Results for: aws lambda limits
+
+First Result: AWS LAMBDA QUOTAS AND LIMITS
+Lambda imposes service quotas that constrain the resources used by your functions. These include memory allocation, timeout periods, payload size, and concurrent executions.
+
+Link: https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html
+
+Additional Results:
+
+[•] AWS Service Quotas - Service limits and quotas for all AWS services including Lambda.
+https://docs.aws.amazon.com/general/latest/gr/aws-service-quotas.html
+
+[•] Lambda Function Scaling - How Lambda functions scale and concurrent execution limits.
+https://docs.aws.amazon.com/lambda/latest/dg/invocation-scaling.html
+
+[•] Lambda Best Practices - Recommendations for optimizing Lambda within service limits.
+https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html
+
+[•] Lambda Pricing - Cost structure and free tier limits for AWS Lambda.
+https://aws.amazon.com/lambda/pricing/
 `,
     };
 
@@ -73,7 +101,7 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
                     promptTemplate,
                     inferenceConfig: {
                         textInferenceConfig: {
-                            temperature: 0.7,
+                            temperature: 0.0,  // Lowered temperature for more deterministic formatting
                             maxTokens: 150,
                         },
                     },
