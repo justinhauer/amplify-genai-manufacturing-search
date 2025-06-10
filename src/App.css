@@ -46,12 +46,12 @@ html {
 }
 
 .message.user {
-  text-align: center;
+  text-align: right;
   color: white;
 }
 
 .message.bot {
-  text-align: center;
+  text-align: right;
 }
 
 form {
